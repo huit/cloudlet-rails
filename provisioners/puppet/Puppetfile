@@ -1,0 +1,11 @@
+forge 'forge.puppetlabs.com'
+
+mod "puppetlabs/stdlib"
+mod "hunner/hiera"
+mod "branan/s3file"
+mod "evenup/varnish"
+mod "thoherr/railsapp"
+
+mod "postfix",
+  :git => "https://github.com/huit/evenup-postfix.git",
+  :ref => 'mediawiki-poc'
