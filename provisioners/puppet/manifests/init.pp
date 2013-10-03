@@ -63,7 +63,7 @@ node default {
       owner   => 'root',
       group   => 'root',
       mode    => 0755,
-      content => inline_template(file('/tmp/mediawiki-puppet-build/templates/motd-role.erb')),
+      content => inline_template(file('/tmp/cloudlet-rails/provisioners/puppet/templates/motd-role.erb')),
       require   => Package['update-motd'],
       before    => Exec['run-update-motd'],
       notify    => Exec['run-update-motd'],
