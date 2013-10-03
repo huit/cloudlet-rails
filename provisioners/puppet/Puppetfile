@@ -7,7 +7,10 @@ mod "hunner/hiera"
 mod "branan/s3file"
 mod "evenup/varnish"
 mod "maestrodev/rvm"
-mod "thoherr/railsapp"
+
+mod "railsapp",
+  :git => "https://github.com/huit/puppet-railsapp.git",
+  :ref => 'puppetlabs_apache'
 
 mod "postfix",
   :git => "https://github.com/huit/evenup-postfix.git",

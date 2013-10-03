@@ -50,6 +50,7 @@ node default {
       relay_port     => $nepho_ses_smtp_port,
       relay_username => $nepho_ses_smtp_username,
       relay_password => $nepho_ses_smtp_password,
+      before         => Class['nepho_railsapp'],
     }
   }
 
