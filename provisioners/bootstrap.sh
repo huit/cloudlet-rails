@@ -9,5 +9,8 @@ function run_if_x {
 # Run Puppet bootstrap
 run_if_x './provisioners/puppet/scripts/bootstrap.sh'
 
+# Run Puppet provision
+run_if_x './provisioners/puppet/scripts/provision.sh'
+
 # Run Puppet deploy
 run_if_x './provisioners/puppet/scripts/deploy.sh'
