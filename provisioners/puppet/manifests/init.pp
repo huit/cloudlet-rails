@@ -144,4 +144,13 @@ class nepho_railsapp (
     appname    => $nepho_railsapp::app_name,
     servername => $nepho_railsapp::server_name,
   }
+
+  augeas { 'ec2-user_rails-group':
+    context => '/files/etc/group',
+    changes => 'set rails/user[0] ec2-user',
+    onlyif  => 'match rails/user[. = "ec2-user"] size == 0',
+    incl    => '/etc/group',
+    lens    => 'Group.lns',
+    require => Class['railsapp'],
+  }
 }
