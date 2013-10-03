@@ -2,9 +2,11 @@ forge 'forge.puppetlabs.com'
 
 mod "puppetlabs/stdlib"
 mod "puppetlabs/firewall"
+mod "puppetlabs/mysql"
 mod "hunner/hiera"
 mod "branan/s3file"
 mod "evenup/varnish"
+mod "maestrodev/rvm"
 mod "thoherr/railsapp"
 
 mod "postfix",
