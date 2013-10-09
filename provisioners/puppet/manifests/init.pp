@@ -9,8 +9,8 @@ node default {
   $default_database_password = 'railsapp'
   $default_application_port  = '8080'
   $default_application_name  = 'railsapp'
-  $default_application_user  = 'apache'
-  $default_application_group = 'apache'
+  $default_application_user  = 'rails'
+  $default_application_group = 'rails'
   $default_smtp_endpoint     = 'localhost'
   $default_smtp_port         = '25'
   # $default_smtp_domain       = $::domain
@@ -162,8 +162,17 @@ class nepho_railsapp (
 
   augeas { "ec2-user_${nepho_railsapp::app_group}_group":
     context => '/files/etc/group',
-    changes => "set ${nepho_railsapp::app_group}/user[0] ec2-user",
+    changes => "set ${nepho_railsapp::app_group}/user[00] ec2-user",
     onlyif  => "match ${nepho_railsapp::app_group}/user[. = \"ec2-user\"] size == 0",
+    incl    => '/etc/group',
+    lens    => 'Group.lns',
+    require => Class['railsapp'],
+  }
+
+  augeas { "apache_${nepho_railsapp::app_group}_group":
+    context => '/files/etc/group',
+    changes => "set ${nepho_railsapp::app_group}/user[00] apache",
+    onlyif  => "match ${nepho_railsapp::app_group}/user[. = \"apache\"] size == 0",
     incl    => '/etc/group',
     lens    => 'Group.lns',
     require => Class['railsapp'],
