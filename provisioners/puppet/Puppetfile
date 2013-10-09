@@ -8,8 +8,12 @@ mod "puppetlabs/mysql"
 mod "hunner/hiera"
 mod "branan/s3file"
 mod "evenup/varnish"
-mod "maestrodev/rvm"
+#mod "maestrodev/rvm"
 mod "thoherr/railsapp"
+
+mod "rvm",
+  :git => "https://github.com/huit/puppet-rvm.git",
+  :ref => 'home_envvar'
 
 mod "postfix",
   :git => "https://github.com/huit/evenup-postfix.git",
