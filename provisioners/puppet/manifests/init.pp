@@ -2,13 +2,15 @@ node default {
   include stdlib
 
   # parameter defaults
-  $default_application_name  = 'railsapp'
   $default_database_host     = 'localhost'
   $default_database_port     = '3306'
   $default_database_name     = 'railsapp'
   $default_database_user     = 'railsapp'
   $default_database_password = 'railsapp'
   $default_application_port  = '8080'
+  $default_application_name  = 'railsapp'
+  $default_application_user  = 'apache'
+  $default_application_group = 'apache'
   $default_smtp_endpoint     = 'localhost'
   $default_smtp_port         = '25'
   # $default_smtp_domain       = $::domain
@@ -19,6 +21,8 @@ node default {
   $nepho_external_hostname = hiera('NEPHO_EXTERNAL_HOSTNAME',$::ec2_public_hostname)
   $nepho_backend_hostname  = hiera('NEPHO_BACKEND_HOSTNAME','localhost')
   $nepho_application_name  = hiera('NEPHO_APPLICATION_NAME',$default_application_name)
+  $nepho_application_user  = hiera('NEPHO_APPLICATION_USER',$default_application_user)
+  $nepho_application_group = hiera('NEPHO_APPLICATION_GROUP',$default_application_group)
   $nepho_database_host     = hiera('NEPHO_DATABASE_HOST',$default_database_host)
   $nepho_database_port     = hiera('NEPHO_DATABASE_PORT',$default_database_port)
   $nepho_database_name     = hiera('NEPHO_DATABASE_NAME',$default_database_name)
@@ -117,6 +121,8 @@ node default {
         db_password      => $nepho_database_password,
         db_port          => $nepho_database_port,
         app_port         => $default_application_port,
+        app_user         => $nepho_application_user,
+        app_group        => $nepho_application_group,
         admin_email      => "${nepho_application_name}@${nepho_ses_smtp_domain}",
       }
     }
@@ -134,6 +140,8 @@ class nepho_railsapp (
   $db_password,
   $db_port,
   $app_port,
+  $app_user,
+  $app_group,
   $admin_email = 'admin@example.com',
   $s3_bucket = false,
   $s3_access_key = false,
@@ -143,6 +151,8 @@ class nepho_railsapp (
   class { 'railsapp':
     appname          => $nepho_railsapp::app_name,
     servername       => $nepho_railsapp::server_name,
+    railsuser        => $nepho_railsapp::app_user,
+    railsgroup       => $nepho_railsapp::app_group,
     rubyversion      => 'ruby-2.0.0-p247',
     passengerversion => '4.0.20',
   }
@@ -150,10 +160,10 @@ class nepho_railsapp (
   include apache
   class { 'apache::mod::status': }
 
-  augeas { 'ec2-user_rails-group':
+  augeas { "ec2-user_${nepho_railsapp::app_group}_group":
     context => '/files/etc/group',
-    changes => 'set rails/user[0] ec2-user',
-    onlyif  => 'match rails/user[. = "ec2-user"] size == 0',
+    changes => "set ${nepho_railsapp::app_group}/user[0] ec2-user",
+    onlyif  => "match ${nepho_railsapp::app_group}/user[. = \"ec2-user\"] size == 0",
     incl    => '/etc/group',
     lens    => 'Group.lns',
     require => Class['railsapp'],
