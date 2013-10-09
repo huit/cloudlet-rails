@@ -141,9 +141,10 @@ class nepho_railsapp (
   $ensure = 'present'
 ) {
   class { 'railsapp':
-    appname     => $nepho_railsapp::app_name,
-    servername  => $nepho_railsapp::server_name,
-    rubyversion => 'ruby-2.0.0-p247',
+    appname          => $nepho_railsapp::app_name,
+    servername       => $nepho_railsapp::server_name,
+    rubyversion      => 'ruby-2.0.0-p247',
+    passengerversion => '4.0.20',
   }
 
   augeas { 'ec2-user_rails-group':
