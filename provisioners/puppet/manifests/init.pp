@@ -157,8 +157,11 @@ class nepho_railsapp (
     passengerversion => '4.0.20',
   }
 
-  include apache
-  class { 'apache::mod::status': }
+  include rvm
+  rvm_gem { 'rake':
+    ensure       => '0.9.2.2',
+    ruby_version => 'ruby-2.0.0-p247',
+  }
 
   augeas { "ec2-user_${nepho_railsapp::app_group}_group":
     context => '/files/etc/group',
