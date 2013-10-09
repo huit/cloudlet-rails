@@ -147,6 +147,9 @@ class nepho_railsapp (
     passengerversion => '4.0.20',
   }
 
+  include apache
+  class { 'apache::mod::status': }
+
   augeas { 'ec2-user_rails-group':
     context => '/files/etc/group',
     changes => 'set rails/user[0] ec2-user',
