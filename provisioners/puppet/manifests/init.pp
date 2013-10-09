@@ -161,6 +161,8 @@ class nepho_railsapp (
   rvm_gem { 'rake':
     ensure       => '0.9.2.2',
     ruby_version => 'ruby-2.0.0-p247',
+    require      => Class['railsapp'],
+    notify       => Service['httpd'],
   }
 
   augeas { "ec2-user_${nepho_railsapp::app_group}_group":
