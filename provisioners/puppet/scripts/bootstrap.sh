@@ -12,7 +12,7 @@ else
 fi
 
 # populate hiera
-if [[ -x './scripts/env2yaml.rb' ]]; then
+if [[ -x './scripts/env2yaml.rb' ]] && [[ ! -s '/etc/puppet/hieradata/common.yaml' ]]; then
     ./scripts/env2yaml.rb > /etc/puppet/hieradata/common.yaml
     echo "Exit value: $?"
 else
