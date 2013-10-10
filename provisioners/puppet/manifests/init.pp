@@ -11,6 +11,8 @@ node default {
   $default_application_name  = 'railsapp'
   $default_application_user  = 'rails'
   $default_application_group = 'rails'
+  $default_ruby_version      = 'ruby-2.0.0-p247'
+  $default_passenger_version = '4.0.20'
   $default_smtp_endpoint     = 'localhost'
   $default_smtp_port         = '25'
   # $default_smtp_domain       = $::domain
@@ -23,6 +25,8 @@ node default {
   $nepho_application_name  = hiera('NEPHO_APPLICATION_NAME',$default_application_name)
   $nepho_application_user  = hiera('NEPHO_APPLICATION_USER',$default_application_user)
   $nepho_application_group = hiera('NEPHO_APPLICATION_GROUP',$default_application_group)
+  $nepho_ruby_version      = hiera('NEPHO_RUBY_VERSION',$default_ruby_version)
+  $nepho_passenger_version = hiera('NEPHO_PASSENGER_VERSION',$default_passenger_version)
   $nepho_database_host     = hiera('NEPHO_DATABASE_HOST',$default_database_host)
   $nepho_database_port     = hiera('NEPHO_DATABASE_PORT',$default_database_port)
   $nepho_database_name     = hiera('NEPHO_DATABASE_NAME',$default_database_name)
@@ -91,39 +95,45 @@ node default {
     'railsapp': {
       # tier 2
       class { 'nepho_railsapp':
-        app_name         => $nepho_application_name,
-        server_name      => $nepho_external_hostname,
-        db_server        => $nepho_database_host,
-        db_root_user     => $nepho_database_user,
-        db_root_password => $nepho_database_password,
-        db_name          => $nepho_database_name,
-        db_user          => $nepho_database_user,
-        db_password      => $nepho_database_password,
-        db_port          => $nepho_database_port,
-        app_port         => $default_application_port,
-        admin_email      => "${nepho_application_name}@${nepho_ses_smtp_domain}",
-        s3_bucket        => false, # disable for PoC
-        s3_access_key    => $nepho_s3_access_key,
-        s3_secret_key    => $nepho_s3_secret_key,
+        app_name          => $nepho_application_name,
+        server_name       => $nepho_external_hostname,
+        db_server         => $nepho_database_host,
+        db_root_user      => $nepho_database_user,
+        db_root_password  => $nepho_database_password,
+        db_name           => $nepho_database_name,
+        db_user           => $nepho_database_user,
+        db_password       => $nepho_database_password,
+        db_port           => $nepho_database_port,
+        app_port          => $default_application_port,
+        app_user          => $nepho_application_user,
+        app_group         => $nepho_application_group,
+        ruby_version      => $nepho_ruby_version,
+        passenger_version => $nepho_passenger_version,
+        admin_email       => "${nepho_application_name}@${nepho_ses_smtp_domain}",
+        s3_bucket         => false, # disable for PoC
+        s3_access_key     => $nepho_s3_access_key,
+        s3_secret_key     => $nepho_s3_secret_key,
       }
     }
     default: {
       # standalone
       #class { 'varnish': }
       class { 'nepho_railsapp':
-        app_name         => $nepho_application_name,
-        server_name      => $nepho_external_hostname,
-        db_server        => $nepho_database_host,
-        db_root_user     => 'root',
-        db_root_password => $nepho_database_password,
-        db_name          => $nepho_database_name,
-        db_user          => $nepho_database_user,
-        db_password      => $nepho_database_password,
-        db_port          => $nepho_database_port,
-        app_port         => $default_application_port,
-        app_user         => $nepho_application_user,
-        app_group        => $nepho_application_group,
-        admin_email      => "${nepho_application_name}@${nepho_ses_smtp_domain}",
+        app_name          => $nepho_application_name,
+        server_name       => $nepho_external_hostname,
+        db_server         => $nepho_database_host,
+        db_root_user      => 'root',
+        db_root_password  => $nepho_database_password,
+        db_name           => $nepho_database_name,
+        db_user           => $nepho_database_user,
+        db_password       => $nepho_database_password,
+        db_port           => $nepho_database_port,
+        app_port          => $default_application_port,
+        app_user          => $nepho_application_user,
+        app_group         => $nepho_application_group,
+        ruby_version      => $nepho_ruby_version,
+        passenger_version => $nepho_passenger_version,
+        admin_email       => "${nepho_application_name}@${nepho_ses_smtp_domain}",
       }
     }
   }
@@ -142,6 +152,8 @@ class nepho_railsapp (
   $app_port,
   $app_user,
   $app_group,
+  $ruby_version,
+  $passenger_version,
   $admin_email = 'admin@example.com',
   $s3_bucket = false,
   $s3_access_key = false,
@@ -153,14 +165,16 @@ class nepho_railsapp (
     servername       => $nepho_railsapp::server_name,
     railsuser        => $nepho_railsapp::app_user,
     railsgroup       => $nepho_railsapp::app_group,
-    rubyversion      => 'ruby-2.0.0-p247',
-    passengerversion => '4.0.20',
+    rubyversion      => $nepho_railsapp::ruby_version,
+    passengerversion => $nepho_railsapp::passenger_version,
   }
 
+  $deployment_gems = [ 'rvm-capistrano', 'rvm-bundler', ]
+
   include rvm
-  rvm_gem { 'rvm-capistrano':
+  rvm_gem { $nepho_railsapp::deployment_gems:
     ensure       => 'latest',
-    ruby_version => 'ruby-2.0.0-p247',
+    ruby_version => $nepho_railsapp::ruby_version,
     require      => Class['railsapp'],
   }
 
