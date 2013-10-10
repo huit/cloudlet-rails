@@ -169,7 +169,7 @@ class nepho_railsapp (
     passengerversion => $nepho_railsapp::passenger_version,
   }
 
-  $deployment_gems = [ 'rvm-capistrano', 'rvm-bundler', ]
+  $deployment_gems = [ 'bundler', 'capistrano', 'rvm-capistrano', ]
 
   include rvm
   rvm_gem { $nepho_railsapp::deployment_gems:
