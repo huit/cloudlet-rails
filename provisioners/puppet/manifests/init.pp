@@ -169,8 +169,6 @@ class nepho_railsapp (
     passengerversion => $nepho_railsapp::passenger_version,
   }
 
-  $deployment_gems = [ 'bundler', 'rvm-capistrano', ]
-
   include rvm
   Rvm_gem {
     ruby_version => $nepho_railsapp::ruby_version,
