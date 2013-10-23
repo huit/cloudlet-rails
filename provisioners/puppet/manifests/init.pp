@@ -172,16 +172,25 @@ class nepho_railsapp (
   $deployment_gems = [ 'bundler', 'rvm-capistrano', ]
 
   include rvm
-  rvm_gem { $nepho_railsapp::deployment_gems:
-    ensure       => 'latest',
+  Rvm_gem {
     ruby_version => $nepho_railsapp::ruby_version,
-    require      => Class['railsapp'],
+    require      => Rvm_system_ruby[$nepho_railsapp::ruby_version],
+  }
+
+  rvm_gem { 'bundler':
+    name   => 'bundler',
+    ensure => 'latest',
   }
 
   rvm_gem { 'capistrano':
-    ensure       => '2.15.5',
-    ruby_version => $nepho_railsapp::ruby_version,
-    require      => Class['railsapp'],
+    name   => 'capistrano',
+    ensure => '2.15.5',
+    before => Rvm_gem['rvm-capistrano'],
+  }
+
+  rvm_gem { 'rvm-capistrano':
+    name   => 'rvm-capistrano',
+    ensure => 'latest',
   }
 
   augeas { "ec2-user_${nepho_railsapp::app_group}_group":
