@@ -11,6 +11,7 @@ node default {
   $default_application_name  = 'railsapp'
   $default_application_user  = 'rails'
   $default_application_group = 'rails'
+  $default_application_repo  = 'https://github.com/huit/railsapp-myapp.git'
   $default_ruby_version      = 'ruby-2.0.0-p247'
   $default_passenger_version = '4.0.20'
   $default_smtp_endpoint     = 'localhost'
@@ -25,6 +26,7 @@ node default {
   $nepho_application_name  = hiera('NEPHO_APPLICATION_NAME',$default_application_name)
   $nepho_application_user  = hiera('NEPHO_APPLICATION_USER',$default_application_user)
   $nepho_application_group = hiera('NEPHO_APPLICATION_GROUP',$default_application_group)
+  $nepho_application_repo  = hiera('NEPHO_APPLICATION_REPO',$default_application_repo)
   $nepho_ruby_version      = hiera('NEPHO_RUBY_VERSION',$default_ruby_version)
   $nepho_passenger_version = hiera('NEPHO_PASSENGER_VERSION',$default_passenger_version)
   $nepho_database_host     = hiera('NEPHO_DATABASE_HOST',$default_database_host)
@@ -96,6 +98,7 @@ node default {
       # tier 2
       class { 'nepho_railsapp':
         app_name          => $nepho_application_name,
+        app_repo          => $nepho_application_repo,
         server_name       => $nepho_external_hostname,
         db_server         => $nepho_database_host,
         db_root_user      => $nepho_database_user,
@@ -120,6 +123,7 @@ node default {
       #class { 'varnish': }
       class { 'nepho_railsapp':
         app_name          => $nepho_application_name,
+        app_repo          => $nepho_application_repo,
         server_name       => $nepho_external_hostname,
         db_server         => $nepho_database_host,
         db_root_user      => 'root',
@@ -141,6 +145,7 @@ node default {
 
 class nepho_railsapp (
   $app_name,
+  $app_repo,
   $server_name,
   $db_server,
   $db_root_user,
@@ -207,5 +212,13 @@ class nepho_railsapp (
     incl    => '/etc/group',
     lens    => 'Group.lns',
     require => Class['railsapp'],
+  }
+
+  file { '/root/capistrano-deploy.rb':
+    ensure  => 'present',
+    owner   => 'root',
+    group   => 'root',
+    mode    => '0640',
+    content => inline_template(file('/tmp/cloudlet-rails/provisioners/puppet/templates/capistrano-deploy.rb.erb')),
   }
 }

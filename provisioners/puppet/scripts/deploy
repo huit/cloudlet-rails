@@ -1,0 +1,6 @@
+#!/bin/sh
+
+# read config values from hiera
+# send a sample capistrano deploy file via SES
+
+# vim: set ft=sh
