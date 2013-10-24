@@ -13,3 +13,5 @@ if [[ -r 'manifests/init.pp' ]]; then
 fi
 
 popd
+
+# vim: set ft=sh

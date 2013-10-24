@@ -30,3 +30,5 @@ fi
 popd
 
 echo 'Completing run of bootstrap.sh'
+
+# vim: set ft=sh
