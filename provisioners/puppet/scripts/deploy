@@ -1,6 +1,12 @@
 #!/bin/sh
 
-# read config values from hiera
+echo "Beginning deployment"
+
 # send a sample capistrano deploy file via SES
+if [ -r '/root/capistrano-deploy.rb' ]; then
+    mail -s "$(facter ec2_public_hostname) Capistrano deploy.rb" steve_huff@harvard.edu < /root/capistrano-deploy.rb
+fi
+
+echo "Finished deployment"
 
 # vim: set ft=sh
