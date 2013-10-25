@@ -25,6 +25,15 @@ else
     echo "Hiera population script not available."
 fi
 
+# make hiera data available as custom facts
+if [[ -r '/etc/puppet/hieradata/common.yaml' ]]; then
+  mkdir -p /etc/facter/facts.d
+  ln -s /etc/puppet/hieradata/common.yaml /etc/facter/facts.d/common.yaml
+  echo "Exit value: $?"
+else
+    echo "Hiera common data file not available."
+fi
+
 # fix the hostname (wtf?)
 if [[ -x '/bin/hostname' && -x '/usr/bin/facter' && -x '/usr/bin/puppet' ]]; then
     /bin/hostname $(/usr/bin/facter -p ec2_hostname) && \
