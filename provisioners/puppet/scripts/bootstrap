@@ -4,6 +4,12 @@ echo 'Beginning run of bootstrap.sh'
 
 pushd provisioners/puppet
 
+# work around Gem SSL issue
+# http://railsapps.github.io/openssl-certificate-verify-failed.html
+if [ ! -r /root/.gemrc ]; then
+  echo ':ssl_verify_mode: 0' >> /root/.gemrc
+fi
+
 # configure hiera
 if [[ -f './manifests/bootstrap.pp' ]]; then
     puppet apply ./manifests/bootstrap.pp
